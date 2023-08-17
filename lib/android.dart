@@ -171,35 +171,25 @@ void _createAndroidSplash({
   }
 
   print('[Android] Updating styles...');
-  if (android12BackgroundColor != null ||
-      android12ImagePath != null ||
-      android12IconBackgroundColor != null ||
-      android12BrandingImagePath != null) {
-    _applyStylesXml(
-      fullScreen: fullscreen,
-      file: _flavorHelper.androidV31StylesFile,
-      template: _androidV31StylesXml,
-      android12BackgroundColor: android12BackgroundColor,
-      android12ImagePath: android12ImagePath,
-      android12IconBackgroundColor: android12IconBackgroundColor,
-      android12BrandingImagePath: android12BrandingImagePath,
-    );
-  }
+  _applyStylesXml(
+    fullScreen: fullscreen,
+    file: _flavorHelper.androidV31StylesFile,
+    template: _androidV31StylesXml,
+    android12BackgroundColor: android12BackgroundColor,
+    android12ImagePath: android12ImagePath,
+    android12IconBackgroundColor: android12IconBackgroundColor,
+    android12BrandingImagePath: android12BrandingImagePath,
+  );
 
-  if (android12DarkBackgroundColor != null ||
-      android12DarkImagePath != null ||
-      darkAndroid12IconBackgroundColor != null ||
-      brandingDarkImagePath != null) {
-    _applyStylesXml(
-      fullScreen: fullscreen,
-      file: _flavorHelper.androidV31StylesNightFile,
-      template: _androidV31StylesNightXml,
-      android12BackgroundColor: android12DarkBackgroundColor,
-      android12ImagePath: android12DarkImagePath,
-      android12IconBackgroundColor: darkAndroid12IconBackgroundColor,
-      android12BrandingImagePath: android12DarkBrandingImagePath,
-    );
-  }
+  _applyStylesXml(
+    fullScreen: fullscreen,
+    file: _flavorHelper.androidV31StylesNightFile,
+    template: _androidV31StylesNightXml,
+    android12BackgroundColor: android12DarkBackgroundColor,
+    android12ImagePath: android12DarkImagePath,
+    android12IconBackgroundColor: darkAndroid12IconBackgroundColor,
+    android12BrandingImagePath: android12DarkBrandingImagePath,
+  );
 
   _applyStylesXml(
     fullScreen: fullscreen,
@@ -207,13 +197,11 @@ void _createAndroidSplash({
     template: _androidStylesXml,
   );
 
-  if (darkColor != null || darkBackgroundImage != null) {
-    _applyStylesXml(
-      fullScreen: fullscreen,
-      file: _flavorHelper.androidNightStylesFile,
-      template: _androidStylesNightXml,
-    );
-  }
+  _applyStylesXml(
+    fullScreen: fullscreen,
+    file: _flavorHelper.androidNightStylesFile,
+    template: _androidStylesNightXml,
+  );
 
   _applyOrientation(orientation: screenOrientation);
 }
@@ -242,9 +230,12 @@ void _applyImageAndroid({
       exit(1);
     }
 
-    for (final template in templates) {
-      _saveImageAndroid(template: template, image: image, fileName: fileName);
-    }
+    _saveImageAndroid(
+      templates: templates,
+      image: image,
+      fileName: fileName,
+      androidResFolder: _flavorHelper.androidResFolder,
+    );
   }
 }
 
@@ -263,28 +254,35 @@ List<_AndroidDrawableTemplate> _getAssociatedTemplates({
 /// Note: Do not change interpolation unless you end up with better results
 /// https://github.com/fluttercommunity/flutter_launcher_icons/issues/101#issuecomment-495528733
 void _saveImageAndroid({
-  required _AndroidDrawableTemplate template,
+  required List<_AndroidDrawableTemplate> templates,
   required Image image,
   required fileName,
-}) {
-  //added file name attribute to make this method generic for splash image and branding image.
-  final newFile = copyResize(
-    image,
-    width: image.width * template.pixelDensity ~/ 4,
-    height: image.height * template.pixelDensity ~/ 4,
-    interpolation: Interpolation.cubic,
-  );
+  required String androidResFolder,
+}) async {
+  await Future.wait(
+    templates.map(
+      (template) => Isolate.run(() async {
+        //added file name attribute to make this method generic for splash image and branding image.
+        final newFile = copyResize(
+          image,
+          width: image.width * template.pixelDensity ~/ 4,
+          height: image.height * template.pixelDensity ~/ 4,
+          interpolation: Interpolation.cubic,
+        );
 
-  // Whne the flavor value is not specified we will place all the data inside the main directory.
-  // However if the flavor value is specified, we need to place the data in the correct directory.
-  // Default: android/app/src/main/res/
-  // With a flavor: android/app/src/[flavor name]/res/
-  final file = File(
-    '${_flavorHelper.androidResFolder}${template.directoryName}/$fileName',
+        // When the flavor value is not specified we will place all the data inside the main directory.
+        // However if the flavor value is specified, we need to place the data in the correct directory.
+        // Default: android/app/src/main/res/
+        // With a flavor: android/app/src/[flavor name]/res/
+        final file = File(
+          '$androidResFolder${template.directoryName}/$fileName',
+        );
+        // File(_androidResFolder + template.directoryName + '/' + 'splash.png');
+        await file.create(recursive: true);
+        await file.writeAsBytes(encodePng(newFile));
+      }),
+    ),
   );
-  // File(_androidResFolder + template.directoryName + '/' + 'splash.png');
-  file.createSync(recursive: true);
-  file.writeAsBytesSync(encodePng(newFile));
 }
 
 void _deleteImageAndroid({
@@ -428,6 +426,11 @@ Future<void> _updateStylesFile({
     name: 'android:windowFullscreen',
     value: fullScreen.toString(),
   );
+
+  replaceElement(
+      launchTheme: launchTheme,
+      name: 'android:windowDrawsSystemBarBackgrounds',
+      value: fullScreen.toString());
 
   replaceElement(
     launchTheme: launchTheme,

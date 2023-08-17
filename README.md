@@ -7,7 +7,7 @@ When your app is opened, there is a brief time while the native app loads Flutte
 
 # What's New
 
-**\[BETA\]** Support for flavors is in beta. Currently only Android and iOS are supported. See instructions below.
+Support for GIF images in web.
 
 You can now keep the splash screen up while your app initializes! No need for a secondary splash screen anymore. Just use the `preserve` and `remove` methods together to remove the splash screen after your initialization is complete. See [details below](https://pub.dev/packages/flutter_native_splash#3-set-up-app-initialization-optional).
 
@@ -19,7 +19,7 @@ First, add `flutter_native_splash` as a dependency in your pubspec.yaml file.
 
 ```yaml
 dependencies:
-  flutter_native_splash: ^2.2.17
+  flutter_native_splash: ^2.3.2
 ```
 
 Don't forget to `flutter pub get`.
@@ -33,9 +33,9 @@ flutter_native_splash:
   # This package generates native code to customize Flutter's default white native splash screen
   # with background color and splash image.
   # Customize the parameters below, and run the following command in the terminal:
-  # flutter pub run flutter_native_splash:create
+  # dart run flutter_native_splash:create
   # To restore Flutter's default white splash screen, run the following command in the terminal:
-  # flutter pub run flutter_native_splash:remove
+  # dart run flutter_native_splash:remove
 
   # color or background_image is the only required parameter.  Use color to set the background
   # of your splash screen to a solid color.  Use background_image to set the background of your
@@ -117,8 +117,8 @@ flutter_native_splash:
   #image_dark_android: assets/splash-invert-android.png
   #image_ios: assets/splash-ios.png
   #image_dark_ios: assets/splash-invert-ios.png
-  #image_web: assets/splash-web.png
-  #image_dark_web: assets/splash-invert-web.png
+  #image_web: assets/splash-web.gif
+  #image_dark_web: assets/splash-invert-web.gif
   #background_image_android: "assets/background-android.png"
   #background_image_dark_android: "assets/dark-background-android.png"
   #background_image_ios: "assets/background-ios.png"
@@ -127,8 +127,8 @@ flutter_native_splash:
   #background_image_dark_web: "assets/dark-background-web.png"
   #branding_android: assets/brand-android.png
   #branding_dark_android: assets/dart_dark-android.png
-  #branding_ios: assets/brand-ios.png
-  #branding_dark_ios: assets/dart_dark-ios.png
+  #branding_ios: assets/brand-ios.gif
+  #branding_dark_ios: assets/dart_dark-ios.gif
 
   # The position of the splash image can be set with android_gravity, ios_content_mode, and
   # web_image_mode parameters.  All default to center.
@@ -158,7 +158,7 @@ flutter_native_splash:
   # NOTE: Unlike Android, iOS will not automatically show the notification bar when the app loads.
   #       To show the notification bar, add the following code to your Flutter app:
   #       WidgetsFlutterBinding.ensureInitialized();
-  #       SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom, SystemUiOverlay.top]);
+  #       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top], );
   #fullscreen: true
 
   # If you have changed the name(s) of your info.plist file(s), you can specify the filename(s)
@@ -174,7 +174,7 @@ flutter_native_splash:
 After adding your settings, run the following command in the terminal:
 
 ```
-flutter pub run flutter_native_splash:create
+dart run flutter_native_splash:create
 ```
 
 When the package finishes running, your splash screen is ready.
@@ -182,7 +182,7 @@ When the package finishes running, your splash screen is ready.
 To specify the YAML file location just add --path with the command in the terminal:
 
 ```
-flutter pub run flutter_native_splash:create --path=path/to/my/file.yaml
+dart run flutter_native_splash:create --path=path/to/my/file.yaml
 ```
 
 ## 3. Set up app initialization (optional)
@@ -230,7 +230,7 @@ Be aware of the following considerations regarding these elements:
 
 4. `color` the window background consists of a single opaque color. 
 
-~~**_PLEASE NOTE:_** The splash screen may not appear when you launch the app from Android Studio. However, it should appear when you launch by clicking on the launch icon in Android.~~  This seems to be resolved now.
+**_PLEASE NOTE:_** The splash screen may not appear when you launch the app from Android Studio on API 31. However, it should appear when you launch by clicking on the launch icon in Android.  This seems to be resolved in API 32+.
 
 **_PLEASE NOTE:_** There are a number of reports that non-Google launchers do not display the launch image correctly. If the launch image does not display correctly, please try the Google launcher to confirm that this package is working.
 
@@ -313,20 +313,26 @@ flutter_native_splash:
   web: false
 ```
 
-Great, now comes the fun part running the new command!
-
-The new command is:
+If you'd like to generate only a single flavor (maybe you are
+testing something out), you can use only the single command like this:
 
 ```bash
 # If you have a flavor called production you would do this:
-flutter pub run flutter_native_splash:create --flavor production
+dart run flutter_native_splash:create --flavor production
 
 # For a flavor with a name staging you would provide it's name like so:
-flutter pub run flutter_native_splash:create --flavor staging
+dart run flutter_native_splash:create --flavor acceptance
 
 # And if you have a local version for devs you could do that:
-flutter pub run flutter_native_splash:create --flavor development
+dart run flutter_native_splash:create --flavor development
 ```
+
+You also have the ability to specify all the flavors in one command
+as shown bellow:
+```bash
+dart run flutter_native_splash:create --flavors development,staging,production
+```
+Note: the available flavors need to be comma separated for this option to work.
 
 ### Android setup
 
@@ -390,11 +396,11 @@ The solution is to remove the above code. Note that this will also remove the fa
 
 ## Are animations/lottie/GIF images supported?
 
-Not at this time. PRs are always welcome!
+GIFs are now supported on web.  Lotties are not yet supported. PRs are always welcome!
 
 ## I got the error AAPT: error: style attribute 'android:attr/windowSplashScreenBackground' not found
 
-This attribute is only found in Android 12, so if you are getting this error, it means your project is not fully set up for Android 12. Did you [update your app's build configuration](https://developer.android.com/about/versions/12/setup-sdk#config)?
+This attribute was added in Android 12, so if you are getting this error, it means your project is not fully set up for Android 12+. Did you [update your app's build configuration](https://developer.android.com/about/versions/12/setup-sdk#config)?
 
 ## I see a flash of the wrong splash screen on iOS
 
@@ -440,7 +446,7 @@ No. This package creates a splash screen that is displayed before Flutter is loa
 
 # Acknowledgments
 
-This package was originally created by [Henrique Arthur](https://github.com/henriquearthur) and it is currently maintained by [Jon Hanson](https://github.com/jonbhanson).
+This package was originally created by [Henrique Arthur](https://github.com/henriquearthur) and is now maintained by [Jon Hanson](https://github.com/jonbhanson).
 
 # Bugs or Requests
 

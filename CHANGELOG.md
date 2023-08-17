@@ -1,4 +1,34 @@
+## [2.3.2] - (2023-Aug-13)
+- Update the example.
+- Update the `environment` value in the `pubspec.yaml`.
+## [2.3.1] - (2023-Jun-04)
+- Package speed up using Isolates to generate files at the same time. Thanks [Vladimir](https://github.com/vlazdra) for [PR #558](https://github.com/jonbhanson/flutter_native_splash/pull/558).
+- New command for generating all flavors at once: --flavors
+- Replaced deprecated 'flutter pub run' with 'dart run'. Thanks [Aditya](https://github.com/adityar224) for [PR #554](https://github.com/jonbhanson/flutter_native_splash/pull/554).
+- Fix fullscreen switch not working for Android <12v in System.dark mode. Fixes [#559](https://github.com/jonbhanson/flutter_native_splash/issues/559).
+
+## [2.3.0] - (2023-May-15)
+- Support for GIFs in splash screen for web. Thanks [OutdatedGuy](https://github.com/OutdatedGuy) for [PR #547](https://github.com/jonbhanson/flutter_native_splash/pull/547).
+- Using inline css & js in index.html to decrease load time. Thanks [OutdatedGuy](https://github.com/OutdatedGuy) for [PR #548](https://github.com/jonbhanson/flutter_native_splash/pull/548).
+- Update example app for Flutter 3.10. Thanks [OutdatedGuy](https://github.com/OutdatedGuy) for [PR #551](https://github.com/jonbhanson/flutter_native_splash/pull/551).
+- Replaced deprecated code with suggested ones. Thanks [OutdatedGuy](https://github.com/OutdatedGuy) for [PR #550](https://github.com/jonbhanson/flutter_native_splash/pull/550).
+- Update ci.yaml with latest flutter CLI commands. Thanks [OutdatedGuy](https://github.com/OutdatedGuy) for [PR #552](https://github.com/jonbhanson/flutter_native_splash/pull/552).
+- Fix compatibility with AGP 8.0.  Thanks [Aljoscha](https://github.com/Almighty-Alpaca) for [PR #545](https://github.com/jonbhanson/flutter_native_splash/pull/545).
+- Migrate to systemUIMode. Thanks [Milind](https://github.com/milindgoel15) for [PR #534](https://github.com/jonbhanson/flutter_native_splash/pull/534).
+
+## [2.2.19] - (2023-Mar-05)
+
+- Refresh the example with the latest version of Flutter.
+- Fix Notification bar incorrectly still showing on Xiaomi devices. Fixes [#517](https://github.com/jonbhanson/flutter_native_splash/issues/517).
+- Updated dependencies.
+
+## [2.2.18] - (2023-Feb-19)
+
+- Remove `v31/styles.xml` files if not in use.  Fixes [#514](https://github.com/jonbhanson/flutter_native_splash/issues/514).
+- Remove web changes on `remove` command.  Fixes [#516](https://github.com/jonbhanson/flutter_native_splash/issues/516).
+
 ## [2.2.17] - (2023-Jan-15)
+
 - Updated image dependency to v4.0.10.  Fixes [#497](https://github.com/jonbhanson/flutter_native_splash/issues/497).
 - Changed image processing from linear to cubic to improve image quality.  Fixes [#472](https://github.com/jonbhanson/flutter_native_splash/issues/472).
 
