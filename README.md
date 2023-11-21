@@ -21,7 +21,7 @@ First, add `flutter_native_splash` as a dependency in your pubspec.yaml file.
 
 ```yaml
 dependencies:
-  flutter_native_splash: ^2.3.3
+  flutter_native_splash: ^2.3.6
 ```
 
 Don't forget to `flutter pub get`.
@@ -133,8 +133,10 @@ flutter_native_splash:
   #background_image_dark_web: "assets/dark-background-web.png"
   #branding_android: assets/brand-android.png
   #branding_dark_android: assets/dart_dark-android.png
-  #branding_ios: assets/brand-ios.gif
-  #branding_dark_ios: assets/dart_dark-ios.gif
+  #branding_ios: assets/brand-ios.png
+  #branding_dark_ios: assets/dart_dark-ios.png
+  #branding_web: assets/brand-web.gif
+  #branding_dark_web: assets/dart_dark-web.gif
 
   # The position of the splash image can be set with android_gravity, ios_content_mode, and
   # web_image_mode parameters.  All default to center.
@@ -167,6 +169,10 @@ flutter_native_splash:
   #       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top], );
   #fullscreen: true
 
+  # On web, the splash screen fades out in 250ms.  This fade delay can be adjusted by changing
+  # the web_splash_fade_time_ms parameter.
+  #web_splash_fade_time_ms: 250
+  
   # If you have changed the name(s) of your info.plist file(s), you can specify the filename(s)
   # with the info_plist_files parameter.  Remove only the # characters in the three lines below,
   # do not remove any spaces:
