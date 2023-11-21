@@ -4,7 +4,7 @@ class _FlavorHelper {
   _FlavorHelper(this._flavor) {
     if (_flavor != null) {
       _androidResFolder = 'android/app/src/$_flavor/res/';
-      _iOSFlavorName = _flavor!.capitalize();
+      _iOSFlavorName = _flavor.capitalize();
     } else {
       _androidResFolder = 'android/app/src/main/res/';
       _iOSFlavorName = '';
