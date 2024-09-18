@@ -40,11 +40,11 @@ void createSplash({
   }
 
   final config = getConfig(configFile: path, flavor: flavor);
-  createSplashByConfig(config);
+  _createSplashByConfig(config);
 }
 
 /// Create splash screens for Android and iOS based on a config argument
-void createSplashByConfig(Map<String, dynamic> config) {
+void _createSplashByConfig(Map<String, dynamic> config) {
   // Preparing all the data for later usage
   final String? image =
       _checkImageExists(config: config, parameter: _Parameter.image);
@@ -64,10 +64,16 @@ void createSplashByConfig(Map<String, dynamic> config) {
       _checkImageExists(config: config, parameter: _Parameter.darkImageWeb);
   final String? brandingImage =
       _checkImageExists(config: config, parameter: _Parameter.brandingImage);
+  final String? brandingBottomPadding =
+      config[_Parameter.brandingBottomPadding]?.toString();
   final String? brandingImageAndroid = _checkImageExists(
       config: config, parameter: _Parameter.brandingImageAndroid);
+  final String? brandingBottomPaddingAndroid =
+      config[_Parameter.brandingBottomPaddingAndroid]?.toString();
   final String? brandingImageIos =
       _checkImageExists(config: config, parameter: _Parameter.brandingImageIos);
+  final String? brandingBottomPaddingIos =
+      config[_Parameter.brandingBottomPaddingIos]?.toString();
   final String? brandingImageWeb =
       _checkImageExists(config: config, parameter: _Parameter.brandingImageWeb);
   final String? brandingDarkImage = _checkImageExists(
@@ -119,7 +125,6 @@ void createSplashByConfig(Map<String, dynamic> config) {
   final String iosContentMode =
       config[_Parameter.iosContentMode] as String? ?? 'center';
   final webImageMode = config[_Parameter.webImageMode] as String? ?? 'center';
-  final fadeTimeMs = config[_Parameter.fadeTimeMs] as int? ?? 250;
   String? android12Image;
   String? android12DarkImage;
   String? android12IconBackgroundColor;
@@ -156,6 +161,8 @@ void createSplashByConfig(Map<String, dynamic> config) {
         imagePath: imageAndroid ?? image,
         darkImagePath: darkImageAndroid ?? darkImage,
         brandingImagePath: brandingImageAndroid ?? brandingImage,
+        brandingBottomPadding:
+            brandingBottomPaddingAndroid ?? brandingBottomPadding,
         brandingDarkImagePath: brandingDarkImageAndroid ?? brandingDarkImage,
         backgroundImage: backgroundImageAndroid ?? backgroundImage,
         darkBackgroundImage: darkBackgroundImageAndroid ?? darkBackgroundImage,
@@ -190,6 +197,8 @@ void createSplashByConfig(Map<String, dynamic> config) {
         darkBackgroundImage: darkBackgroundImageIos ?? darkBackgroundImage,
         brandingImagePath: brandingImageIos ?? brandingImage,
         brandingDarkImagePath: brandingDarkImageIos ?? brandingDarkImage,
+        brandingBottomPadding:
+            brandingBottomPaddingIos ?? brandingBottomPadding,
         color: colorIos ?? color,
         darkColor: darkColorIos ?? darkColor,
         plistFiles: plistFiles,
@@ -215,7 +224,6 @@ void createSplashByConfig(Map<String, dynamic> config) {
         darkColor: darkColorWeb ?? darkColor,
         imageMode: webImageMode,
         brandingMode: brandingGravity,
-        fadeTimeMs: fadeTimeMs,
       );
     } else {
       print('Web folder not found, skipping web splash update...');
@@ -229,15 +237,7 @@ Now go finish building something awesome! 💪 You rock! 🤘🤩
 Like the package? Please give it a 👍 here: https://pub.dev/packages/flutter_native_splash
 ''';
 
-  const String whatsNew = '''
-╔════════════════════════════════════════════════════════════════════════════╗
-║                       NEED A GREAT FLUTTER DEVELOPER?                      ║
-╠════════════════════════════════════════════════════════════════════════════╣
-║                                                                            ║
-║   I am available!  Find me at https://www.linkedin.com/in/hansonjon/       ║
-║                                                                            ║
-╚════════════════════════════════════════════════════════════════════════════╝
-''';
+  const String whatsNew = '';
   print(whatsNew + greet);
 }
 
@@ -271,7 +271,7 @@ void removeSplash({
   if (config.containsKey(_Parameter.plistFiles)) {
     removeConfig[_Parameter.plistFiles] = config[_Parameter.plistFiles];
   }
-  createSplashByConfig(removeConfig);
+  _createSplashByConfig(removeConfig);
 }
 
 String? _checkImageExists({
@@ -357,7 +357,12 @@ Map<String, dynamic> getConfig({
     filePath = 'pubspec.yaml';
   }
 
-  final Map yamlMap = loadYaml(File(filePath).readAsStringSync()) as Map;
+  final Map yamlMap;
+  try {
+    yamlMap = loadYaml(File(filePath).readAsStringSync()) as Map;
+  } catch (e) {
+    throw Exception('Your `$filePath` appears to be empty or malformed.');
+  }
 
   if (yamlMap['flutter_native_splash'] is! Map) {
     throw Exception(
@@ -378,7 +383,7 @@ Map<String, dynamic> _yamlToMap(YamlMap yamlMap) {
       print(pen("⚠️ The parameter \"${entry.key}\" was found "
           "in your flutter_native_splash config, but \"${entry.key}\" "
           "is not a valid flutter_native_splash parameter."));
-      exit(0);
+      exit(1);
     }
     if (entry.value is YamlList) {
       final list = <String>[];
@@ -416,17 +421,20 @@ class _Parameter {
   static const android12Section = 'android_12';
   static const androidScreenOrientation = 'android_screen_orientation';
   static const backgroundImage = 'background_image';
-  static const backgroundImageAndroid = 'background_android';
-  static const backgroundImageIos = 'background_ios';
-  static const backgroundImageWeb = 'background_web';
+  static const backgroundImageAndroid = 'background_image_android';
+  static const backgroundImageIos = 'background_image_ios';
+  static const backgroundImageWeb = 'background_image_web';
   static const brandingDarkImage = 'branding_dark';
   static const brandingDarkImageAndroid = 'branding_dark_android';
   static const brandingDarkImageIos = 'branding_dark_ios';
   static const brandingDarkImageWeb = 'branding_dark_web';
   static const brandingGravity = 'branding_mode';
   static const brandingImage = 'branding';
+  static const brandingBottomPadding = 'branding_bottom_padding';
   static const brandingImageAndroid = 'branding_android';
+  static const brandingBottomPaddingAndroid = 'branding_bottom_padding_android';
   static const brandingImageIos = 'branding_ios';
+  static const brandingBottomPaddingIos = 'branding_bottom_padding_ios';
   static const brandingImageWeb = 'branding_web';
   static const color = 'color';
   static const colorAndroid = "color_android";
@@ -457,7 +465,6 @@ class _Parameter {
   static const plistFiles = 'info_plist_files';
   static const web = 'web';
   static const webImageMode = 'web_image_mode';
-  static const fadeTimeMs = 'web_splash_fade_time_ms';
 
   static List<String> all = [
     android,
@@ -473,8 +480,11 @@ class _Parameter {
     brandingDarkImageWeb,
     brandingGravity,
     brandingImage,
+    brandingBottomPadding,
     brandingImageAndroid,
     brandingImageIos,
+    brandingBottomPaddingIos,
+    brandingBottomPaddingAndroid,
     brandingImageWeb,
     color,
     colorAndroid,
@@ -505,6 +515,5 @@ class _Parameter {
     plistFiles,
     web,
     webImageMode,
-    fadeTimeMs,
   ];
 }

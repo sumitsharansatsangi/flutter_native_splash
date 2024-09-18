@@ -1,5 +1,5 @@
 name: flutter_native_splash_example
-description: A new Flutter project.
+description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
+  sdk: '>=3.4.3 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -34,7 +34,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
+  cupertino_icons: ^1.0.8
   flutter_native_splash:
     path: ..
 
@@ -47,7 +47,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -229,10 +229,6 @@ flutter_native_splash:
   #       WidgetsFlutterBinding.ensureInitialized();
   #       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top], );
   #fullscreen: true
-
-  # On web, the splash screen fades out in 250ms.  This fade delay can be adjusted by changing
-  # the web_splash_fade_time_ms parameter.
-  #web_splash_fade_time_ms: 250
 
   # If you have changed the name(s) of your info.plist file(s), you can specify the filename(s)
   # with the info_plist_files parameter.  Remove only the # characters in the three lines below,
