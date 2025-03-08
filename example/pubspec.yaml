@@ -1,5 +1,5 @@
 name: flutter_native_splash_example
-description: "A new Flutter project."
+description: "Example for Flutter Native Splash package."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: ^3.5.4
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -47,7 +47,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -66,10 +66,10 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware
+  # https://flutter.dev/to/resolution-aware-images
 
   # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
+  # https://flutter.dev/to/asset-from-package
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
@@ -89,7 +89,7 @@ flutter:
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+  # see https://flutter.dev/to/font-from-package
 
 flutter_native_splash:
 
@@ -129,9 +129,9 @@ flutter_native_splash:
 
   # The color_dark, background_image_dark, image_dark, branding_dark are parameters that set the background
   # and image when the device is in dark mode. If they are not specified, the app will use the
-  # parameters from above. If the image_dark parameter is specified, color_dark or
-  # background_image_dark must be specified.  color_dark and background_image_dark cannot both be
-  # set.
+  # parameters from above.  If there is no parameter above, the app will use the light mode values.
+  # If the image_dark parameter is specified, color_dark or background_image_dark must be specified.
+  # color_dark and background_image_dark cannot both be set.
   color_dark: "#042a49"
   #background_image_dark: "assets/dark-background.png"
   image_dark: assets/logo_lockup_flutter_vertical_wht.png
@@ -161,7 +161,7 @@ flutter_native_splash:
 
   # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
   # apply when the device is in dark mode. If they are not specified, the app will use the
-  # parameters from above.
+  # parameters from above.  If there is no parameter above, the app will use the light mode values.
   #image_dark: assets/android12splash-invert.png
   #color_dark: "#042a49"
     #icon_background_color_dark: "#111111"
