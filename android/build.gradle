@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.0'
+        classpath 'com.android.tools.build:gradle:8.10.1'
     }
 }
 
@@ -24,7 +24,7 @@ apply plugin: 'com.android.library'
 android {
     namespace "net.jonhanson.flutter_native_splash"
 
-    compileSdk 35
+    compileSdk 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
