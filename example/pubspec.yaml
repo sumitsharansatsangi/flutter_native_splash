@@ -103,6 +103,7 @@ flutter_native_splash:
   # IMPORTANT NOTE: These parameter do not affect the configuration of Android 12 and later, which
   # handle splash screens differently that prior versions of Android.  Android 12 and later must be
   # configured specifically in the android_12 section below.
+  # Android 6 through Android 11 are configured by these top-level Android parameters.
 
   # color or background_image is the only required parameter.  Use color to set the background
   # of your splash screen to a solid color.  Use background_image to set the background of your
@@ -115,7 +116,8 @@ flutter_native_splash:
   # the leading # character.
 
   # The image parameter allows you to specify an image used in the splash screen.  It must be a
-  # png file and should be sized for 4x pixel density.
+  # png file and should be sized for 4x pixel density. This is used on Android 11 and earlier,
+  # iOS, and the web. Android 12 and later use the android_12 image below.
   image: assets/logo_lockup_flutter_vertical.png
 
   # The branding property allows you to specify an image used as branding in the splash screen.
@@ -144,10 +146,10 @@ flutter_native_splash:
   # The image parameter sets the splash screen icon image.  If this parameter is not specified,
   # the app's launcher icon will be used instead.
   # Please note that the splash screen will be clipped to a circle on the center of the screen.
-  # App icon with an icon background: This should be 960×960 pixels, and fit within a circle
-  # 640 pixels in diameter.
-  # App icon without an icon background: This should be 1152×1152 pixels, and fit within a circle
-  # 768 pixels in diameter.
+  # App icon with an icon background: This should be 240×240 dp, and fit within a circle
+  # 160 dp in diameter.
+  # App icon without an icon background: This should be 288×288 dp, and fit within a circle
+  # 192 dp in diameter.
     image: assets/android12splash.png
 
   # Splash screen background color.
@@ -157,6 +159,7 @@ flutter_native_splash:
     icon_background_color: "#eeeeee"
 
   # The branding property allows you to specify an image used as branding in the splash screen.
+  # Android recommends against using branding images. If you use one, it should be 200×80 dp.
   #branding: assets/dart.png
 
   # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that

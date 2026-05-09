@@ -11,11 +11,29 @@ class _AndroidDrawableTemplate {
   });
 }
 
+class _AndroidImageSize {
+  final int widthDp;
+  final int heightDp;
+
+  const _AndroidImageSize.square(int dp) : this(widthDp: dp, heightDp: dp);
+
+  const _AndroidImageSize({required this.widthDp, required this.heightDp});
+}
+
+const _android12SplashIconWithoutBackgroundSize = _AndroidImageSize.square(288);
+const _android12SplashIconWithBackgroundSize = _AndroidImageSize.square(240);
+const _android12BrandingImageSize = _AndroidImageSize(
+  widthDp: 200,
+  heightDp: 80,
+);
+
 final _imagesTemplates = _generateImageTemplates();
 final _imageDarkTemplates = _generateImageTemplates(dark: true);
 final _imagesAndroid12Templates = _generateImageTemplates(android12: true);
-final _imagesAndroid12DarkTemplates =
-    _generateImageTemplates(android12: true, dark: true);
+final _imagesAndroid12DarkTemplates = _generateImageTemplates(
+  android12: true,
+  dark: true,
+);
 
 List<_AndroidDrawableTemplate> _generateImageTemplates({
   bool dark = false,
@@ -88,19 +106,24 @@ void _createAndroidSplash({
   //create android 12 image if provided.  (otherwise uses launch icon)
   _applyImageAndroid(
     imagePath: android12ImagePath,
+    android12: true,
     fileName: 'android12splash.png',
+    targetSize: _getAndroid12SplashIconSize(android12IconBackgroundColor),
   );
 
   _applyImageAndroid(
     imagePath: android12DarkImagePath,
     dark: true,
+    android12: true,
     fileName: 'android12splash.png',
+    targetSize: _getAndroid12SplashIconSize(darkAndroid12IconBackgroundColor),
   );
 
   _applyImageAndroid(
     imagePath: android12BrandingImagePath,
     android12: true,
     fileName: 'android12branding.png',
+    targetSize: _android12BrandingImageSize,
   );
 
   _applyImageAndroid(
@@ -108,6 +131,7 @@ void _createAndroidSplash({
     dark: true,
     android12: true,
     fileName: 'android12branding.png',
+    targetSize: _android12BrandingImageSize,
   );
 
   _createBackground(
@@ -179,6 +203,22 @@ void _createAndroidSplash({
   print('[Android] Updating styles...');
   _applyStylesXml(
     fullScreen: fullscreen,
+    file: _flavorHelper.androidV23StylesFile,
+    template: _androidV23StylesXml,
+    statusBarColor: color,
+    lightStatusBar: _isLightColor(color),
+  );
+
+  _applyStylesXml(
+    fullScreen: fullscreen,
+    file: _flavorHelper.androidV23StylesNightFile,
+    template: _androidV23StylesNightXml,
+    statusBarColor: darkColor ?? color,
+    lightStatusBar: _isLightColor(darkColor ?? color),
+  );
+
+  _applyStylesXml(
+    fullScreen: fullscreen,
     file: _flavorHelper.androidV31StylesFile,
     template: _androidV31StylesXml,
     android12BackgroundColor: android12BackgroundColor,
@@ -222,6 +262,7 @@ void _applyImageAndroid({
   bool dark = false,
   bool android12 = false,
   String fileName = 'splash.png',
+  _AndroidImageSize? targetSize,
 }) {
   final templates = _getAssociatedTemplates(android12: android12, dark: dark);
   if (imagePath == null) {
@@ -240,15 +281,20 @@ void _applyImageAndroid({
       exit(1);
     }
 
-    int? targetDp = fileName.contains('branding') ? 160 : android12 ? 432 : null;
     _saveImageAndroid(
       templates: templates,
       image: image,
       fileName: fileName,
       androidResFolder: _flavorHelper.androidResFolder,
-      targetDp: targetDp,
+      targetSize: targetSize,
     );
   }
+}
+
+_AndroidImageSize _getAndroid12SplashIconSize(String? iconBackgroundColor) {
+  return iconBackgroundColor == null
+      ? _android12SplashIconWithoutBackgroundSize
+      : _android12SplashIconWithBackgroundSize;
 }
 
 List<_AndroidDrawableTemplate> _getAssociatedTemplates({
@@ -270,40 +316,62 @@ void _saveImageAndroid({
   required Image image,
   required fileName,
   required String androidResFolder,
-  int? targetDp,
-}) async {
-  await Future.wait(
-    templates.map(
-      (template) => Isolate.run(() async {
-        //added file name attribute to make this method generic for splash image and branding image.
-        int width, height;
-        if (targetDp != null) {
-          width = (targetDp * template.pixelDensity).toInt();
-          height = (targetDp * template.pixelDensity * image.height / image.width).toInt();
-        } else {
-          width = image.width * template.pixelDensity ~/ 4;
-          height = image.height * template.pixelDensity ~/ 4;
-        }
-        final newFile = copyResize(
-          image,
-          width: width,
-          height: height,
-          interpolation: Interpolation.average,
-        );
+  _AndroidImageSize? targetSize,
+}) {
+  for (final template in templates) {
+    //added file name attribute to make this method generic for splash image and branding image.
+    int width, height;
+    Image newFile;
+    if (targetSize != null) {
+      width = (targetSize.widthDp * template.pixelDensity).round();
+      height = (targetSize.heightDp * template.pixelDensity).round();
+      newFile = _copyResizeContained(
+        image: image,
+        width: width,
+        height: height,
+      );
+    } else {
+      width = image.width * template.pixelDensity ~/ 4;
+      height = image.height * template.pixelDensity ~/ 4;
+      newFile = copyResize(
+        image,
+        width: width,
+        height: height,
+        interpolation: Interpolation.average,
+      );
+    }
 
-        // When the flavor value is not specified we will place all the data inside the main directory.
-        // However if the flavor value is specified, we need to place the data in the correct directory.
-        // Default: android/app/src/main/res/
-        // With a flavor: android/app/src/[flavor name]/res/
-        final file = File(
-          '$androidResFolder${template.directoryName}/$fileName',
-        );
-        // File(_androidResFolder + template.directoryName + '/' + 'splash.png');
-        await file.create(recursive: true);
-        await file.writeAsBytes(encodePng(newFile));
-      }),
-    ),
+    // When the flavor value is not specified we will place all the data inside the main directory.
+    // However if the flavor value is specified, we need to place the data in the correct directory.
+    // Default: android/app/src/main/res/
+    // With a flavor: android/app/src/[flavor name]/res/
+    final file = File('$androidResFolder${template.directoryName}/$fileName');
+    // File(_androidResFolder + template.directoryName + '/' + 'splash.png');
+    file.createSync(recursive: true);
+    file.writeAsBytesSync(encodePng(newFile));
+  }
+}
+
+Image _copyResizeContained({
+  required Image image,
+  required int width,
+  required int height,
+}) {
+  final scale = width / height < image.width / image.height
+      ? width / image.width
+      : height / image.height;
+  final resizedWidth = (image.width * scale).round().clamp(1, width);
+  final resizedHeight = (image.height * scale).round().clamp(1, height);
+  final resizedImage = copyResize(
+    image,
+    width: resizedWidth,
+    height: resizedHeight,
+    interpolation: Interpolation.average,
   );
+  final canvas = Image(width: width, height: height, numChannels: 4);
+  fill(canvas, color: ColorRgba8(0, 0, 0, 0));
+  compositeImage(canvas, resizedImage, center: true);
+  return canvas;
 }
 
 void _deleteImageAndroid({
@@ -332,15 +400,17 @@ void _applyLaunchBackgroundXml({
   print('[Android]  - $launchBackgroundFilePath');
   final launchBackgroundFile = File(launchBackgroundFilePath);
   launchBackgroundFile.createSync(recursive: true);
-  final launchBackgroundDocument =
-      XmlDocument.parse(_androidLaunchBackgroundXml);
+  final launchBackgroundDocument = XmlDocument.parse(
+    _androidLaunchBackgroundXml,
+  );
 
   final layerList = launchBackgroundDocument.getElement('layer-list');
   final List<XmlNode> items = layerList!.children;
 
   if (showImage) {
-    final splashItem =
-        XmlDocument.parse(_androidLaunchItemXml).rootElement.copy();
+    final splashItem = XmlDocument.parse(
+      _androidLaunchItemXml,
+    ).rootElement.copy();
     splashItem.getElement('bitmap')?.setAttribute('android:gravity', gravity);
     items.add(splashItem);
   }
@@ -348,10 +418,13 @@ void _applyLaunchBackgroundXml({
   if (showBranding && gravity != brandingGravityValue) {
     //add branding when splash image and branding image are not at the same position
     final androidBrandingItemXml = _androidBrandingItemXml.replaceAll(
-        "{bottom_padding}", brandingBottomPadding ?? "0");
+      "{bottom_padding}",
+      brandingBottomPadding ?? "0",
+    );
     print('[Android] branding bottom padding: ${brandingBottomPadding ?? "0"}');
-    final brandingItem =
-        XmlDocument.parse(androidBrandingItemXml).rootElement.copy();
+    final brandingItem = XmlDocument.parse(
+      androidBrandingItemXml,
+    ).rootElement.copy();
     if (brandingGravityValue == 'bottomRight') {
       brandingGravityValue = 'bottom|right';
     } else if (brandingGravityValue == 'bottomLeft') {
@@ -378,6 +451,8 @@ void _applyStylesXml({
   required bool fullScreen,
   required String file,
   required String template,
+  String? statusBarColor,
+  bool? lightStatusBar,
   String? android12BackgroundColor,
   String? android12ImagePath,
   String? android12IconBackgroundColor,
@@ -396,6 +471,8 @@ void _applyStylesXml({
   _updateStylesFile(
     fullScreen: fullScreen,
     stylesFile: stylesFile,
+    statusBarColor: statusBarColor,
+    lightStatusBar: lightStatusBar,
     android12BackgroundColor: android12BackgroundColor,
     android12ImagePath: android12ImagePath,
     android12IconBackgroundColor: android12IconBackgroundColor,
@@ -408,6 +485,8 @@ void _applyStylesXml({
 Future<void> _updateStylesFile({
   required bool fullScreen,
   required File stylesFile,
+  required String? statusBarColor,
+  required bool? lightStatusBar,
   required String? android12BackgroundColor,
   required String? android12ImagePath,
   required String? android12IconBackgroundColor,
@@ -456,15 +535,39 @@ Future<void> _updateStylesFile({
   );
 
   _replaceElement(
-      launchTheme: launchTheme,
-      name: 'android:windowDrawsSystemBarBackgrounds',
-      value: fullScreen.toString());
+    launchTheme: launchTheme,
+    name: 'android:windowDrawsSystemBarBackgrounds',
+    value: fullScreen.toString(),
+  );
 
   _replaceElement(
     launchTheme: launchTheme,
     name: 'android:windowLayoutInDisplayCutoutMode',
     value: 'shortEdges',
   );
+
+  if (statusBarColor == null) {
+    _removeElement(launchTheme: launchTheme, name: 'android:statusBarColor');
+  } else {
+    _replaceElement(
+      launchTheme: launchTheme,
+      name: 'android:statusBarColor',
+      value: '#$statusBarColor',
+    );
+  }
+
+  if (lightStatusBar == null) {
+    _removeElement(
+      launchTheme: launchTheme,
+      name: 'android:windowLightStatusBar',
+    );
+  } else {
+    _replaceElement(
+      launchTheme: launchTheme,
+      name: 'android:windowLightStatusBar',
+      value: lightStatusBar.toString(),
+    );
+  }
 
   // In Android 12, the color must be set directly in the styles.xml
   if (android12BackgroundColor == null) {
@@ -535,6 +638,15 @@ Future<void> _updateStylesFile({
   stylesFile.writeAsStringSync(
     '${stylesDocument.toXmlString(pretty: true, indent: '    ')}\n',
   );
+}
+
+bool? _isLightColor(String? color) {
+  if (color == null) return null;
+  final red = int.parse(color.substring(0, 2), radix: 16);
+  final green = int.parse(color.substring(2, 4), radix: 16);
+  final blue = int.parse(color.substring(4, 6), radix: 16);
+  final luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
+  return luminance > 0.5;
 }
 
 void _replaceElement({

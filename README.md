@@ -40,6 +40,7 @@ flutter_native_splash:
   # IMPORTANT NOTE: These parameter do not affect the configuration of Android 12 and later, which
   # handle splash screens differently that prior versions of Android.  Android 12 and later must be
   # configured specifically in the android_12 section below.
+  # Android 6 through Android 11 are configured by these top-level Android parameters.
 
   # color or background_image is the only required parameter.  Use color to set the background
   # of your splash screen to a solid color.  Use background_image to set the background of your
@@ -52,7 +53,8 @@ flutter_native_splash:
   # the leading # character.
 
   # The image parameter allows you to specify an image used in the splash screen.  It must be a
-  # png file and should be sized for 4x pixel density.
+  # png file and should be sized for 4x pixel density. This is used on Android 11 and earlier,
+  # iOS, and the web. Android 12 and later use the android_12 image below.
   #image: assets/splash.png
 
   # The branding property allows you to specify an image used as branding in the splash screen.
@@ -85,12 +87,10 @@ flutter_native_splash:
     # The image parameter sets the splash screen icon image.  If this parameter is not specified,
     # the app's launcher icon will be used instead.
     # Please note that the splash screen will be clipped to a circle on the center of the screen.
-    # App icon with an icon background: This should be 960×960 pixels, and fit within a circle
-    # 640 pixels in diameter.
-    # App icon without an icon background: This should be 1152×1152 pixels, and fit within a circle
-    # 768 pixels in diameter.  To fit a 1152x1152 image within a circle with a 768 diameter, simply 
-    # ensure that the most important design elements of your image are placed within a circular area
-    # with a 768 diameter at the center of the 1152x1152 canvas.
+    # App icon with an icon background: This should be 240×240 dp, and fit within a circle
+    # 160 dp in diameter.
+    # App icon without an icon background: This should be 288×288 dp, and fit within a circle
+    # 192 dp in diameter.
     #image: assets/android12splash.png
 
     # Splash screen background color.
@@ -100,6 +100,7 @@ flutter_native_splash:
     #icon_background_color: "#111111"
 
     # The branding property allows you to specify an image used as branding in the splash screen.
+    # Android recommends against using branding images. If you use one, it should be 200×80 dp.
     #branding: assets/dart.png
 
     # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
@@ -247,8 +248,8 @@ Be aware of the following considerations regarding these elements:
 
 1. `image` parameter. By default, the launcher icon is used:
 
-   - App icon without an icon background, as shown on the left: This should be 1152×1152 pixels, and fit within a circle 768 pixels in diameter.
-   - App icon with an icon background, as shown on the right: This should be 960×960 pixels, and fit within a circle 640 pixels in diameter.
+   - App icon without an icon background, as shown on the left: This should be 288×288 dp, and fit within a circle 192 dp in diameter.
+   - App icon with an icon background, as shown on the right: This should be 240×240 dp, and fit within a circle 160 dp in diameter.
 
 2. `icon_background_color` is optional, and is useful if you need more contrast between the icon and the window background.
 
@@ -256,11 +257,19 @@ Be aware of the following considerations regarding these elements:
 
 4. `color` the window background consists of a single opaque color.
 
+5. `branding` is optional. Android recommends against using a branding image; if you use one, it should be 200×80 dp.
+
 **_PLEASE NOTE:_** The splash screen may not appear when you launch the app from Android Studio on API 31. However, it should appear when you launch by clicking on the launch icon in Android. This seems to be resolved in API 32+.
 
 **_PLEASE NOTE:_** There are a number of reports that non-Google launchers do not display the launch image correctly. If the launch image does not display correctly, please try the Google launcher to confirm that this package is working.
 
 **_PLEASE NOTE:_** The splash screen does not appear when you launch the app from a notification. Apparently this is the intended behavior on Android 12: [core-splashscreen Icon not shown when cold launched from notification](https://issuetracker.google.com/issues/199776339?pli=1).
+
+No extra splash image resources are required for Android 17 / API 37. Android 12+ still uses the platform splash screen attributes generated under `values-v31` and `drawable-*-v31`.
+
+# Android 6-11 Support
+
+Android 6 through Android 11 use the native launch window background because the platform splash screen API starts on Android 12. This package generates density-specific drawables and a `values-v23` launch theme so the splash remains native and presentable on API 23-30, including matching status bar color when a solid splash `color` is configured.
 
 # Flavor Support
 

@@ -24,19 +24,14 @@ part 'web.dart';
 late _FlavorHelper _flavorHelper;
 
 /// Create splash screens for Android and iOS
-void createSplash({
-  required String? path,
-  required String? flavor,
-}) {
+void createSplash({required String? path, required String? flavor}) {
   if (flavor != null) {
-    print(
-      '''
+    print('''
 ╔════════════════════════════════════════════════════════════════════════════╗
 ║                             Setting up flavors!                            ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 ===> Setting up the $flavor flavor.
-''',
-    );
+''');
   }
 
   final config = getConfig(configFile: path, flavor: flavor);
@@ -46,71 +41,118 @@ void createSplash({
 /// Create splash screens for Android and iOS based on a config argument
 void _createSplashByConfig(Map<String, dynamic> config) {
   // Preparing all the data for later usage
-  final String? image =
-      _checkImageExists(config: config, parameter: _Parameter.image);
-  final String? imageAndroid =
-      _checkImageExists(config: config, parameter: _Parameter.imageAndroid);
-  final String? imageIos =
-      _checkImageExists(config: config, parameter: _Parameter.imageIos);
-  final String? imageWeb =
-      _checkImageExists(config: config, parameter: _Parameter.imageWeb);
-  final String? darkImage =
-      _checkImageExists(config: config, parameter: _Parameter.darkImage);
-  final String? darkImageAndroid =
-      _checkImageExists(config: config, parameter: _Parameter.darkImageAndroid);
-  final String? darkImageIos =
-      _checkImageExists(config: config, parameter: _Parameter.darkImageIos);
-  final String? darkImageWeb =
-      _checkImageExists(config: config, parameter: _Parameter.darkImageWeb);
-  final String? brandingImage =
-      _checkImageExists(config: config, parameter: _Parameter.brandingImage);
-  final String? brandingBottomPadding =
-      config[_Parameter.brandingBottomPadding]?.toString();
+  final String? image = _checkImageExists(
+    config: config,
+    parameter: _Parameter.image,
+  );
+  final String? imageAndroid = _checkImageExists(
+    config: config,
+    parameter: _Parameter.imageAndroid,
+  );
+  final String? imageIos = _checkImageExists(
+    config: config,
+    parameter: _Parameter.imageIos,
+  );
+  final String? imageWeb = _checkImageExists(
+    config: config,
+    parameter: _Parameter.imageWeb,
+  );
+  final String? darkImage = _checkImageExists(
+    config: config,
+    parameter: _Parameter.darkImage,
+  );
+  final String? darkImageAndroid = _checkImageExists(
+    config: config,
+    parameter: _Parameter.darkImageAndroid,
+  );
+  final String? darkImageIos = _checkImageExists(
+    config: config,
+    parameter: _Parameter.darkImageIos,
+  );
+  final String? darkImageWeb = _checkImageExists(
+    config: config,
+    parameter: _Parameter.darkImageWeb,
+  );
+  final String? brandingImage = _checkImageExists(
+    config: config,
+    parameter: _Parameter.brandingImage,
+  );
+  final String? brandingBottomPadding = config[_Parameter.brandingBottomPadding]
+      ?.toString();
   final String? brandingImageAndroid = _checkImageExists(
-      config: config, parameter: _Parameter.brandingImageAndroid);
+    config: config,
+    parameter: _Parameter.brandingImageAndroid,
+  );
   final String? brandingBottomPaddingAndroid =
       config[_Parameter.brandingBottomPaddingAndroid]?.toString();
-  final String? brandingImageIos =
-      _checkImageExists(config: config, parameter: _Parameter.brandingImageIos);
+  final String? brandingImageIos = _checkImageExists(
+    config: config,
+    parameter: _Parameter.brandingImageIos,
+  );
   final String? brandingBottomPaddingIos =
       config[_Parameter.brandingBottomPaddingIos]?.toString();
-  final String? brandingImageWeb =
-      _checkImageExists(config: config, parameter: _Parameter.brandingImageWeb);
+  final String? brandingImageWeb = _checkImageExists(
+    config: config,
+    parameter: _Parameter.brandingImageWeb,
+  );
   final String? brandingDarkImage = _checkImageExists(
-      config: config, parameter: _Parameter.brandingDarkImage);
+    config: config,
+    parameter: _Parameter.brandingDarkImage,
+  );
   final String? brandingDarkImageAndroid = _checkImageExists(
-      config: config, parameter: _Parameter.brandingDarkImageAndroid);
+    config: config,
+    parameter: _Parameter.brandingDarkImageAndroid,
+  );
   final String? brandingDarkImageIos = _checkImageExists(
-      config: config, parameter: _Parameter.brandingDarkImageIos);
+    config: config,
+    parameter: _Parameter.brandingDarkImageIos,
+  );
   final String? brandingDarkImageWeb = _checkImageExists(
-      config: config, parameter: _Parameter.brandingDarkImageWeb);
+    config: config,
+    parameter: _Parameter.brandingDarkImageWeb,
+  );
   final String? color = parseColor(config[_Parameter.color]);
   final String? colorAndroid = parseColor(config[_Parameter.colorAndroid]);
   final String? colorIos = parseColor(config[_Parameter.colorIos]);
   final String? colorWeb = parseColor(config[_Parameter.colorWeb]);
   final String? darkColor = parseColor(config[_Parameter.darkColor]);
-  final String? darkColorAndroid =
-      parseColor(config[_Parameter.darkColorAndroid]);
+  final String? darkColorAndroid = parseColor(
+    config[_Parameter.darkColorAndroid],
+  );
   final String? darkColorIos = parseColor(config[_Parameter.darkColorIos]);
   final String? darkColorWeb = parseColor(config[_Parameter.darkColorWeb]);
-  final String? backgroundImage =
-      _checkImageExists(config: config, parameter: _Parameter.backgroundImage);
+  final String? backgroundImage = _checkImageExists(
+    config: config,
+    parameter: _Parameter.backgroundImage,
+  );
   final String? backgroundImageAndroid = _checkImageExists(
-      config: config, parameter: _Parameter.backgroundImageAndroid);
+    config: config,
+    parameter: _Parameter.backgroundImageAndroid,
+  );
   final String? backgroundImageIos = _checkImageExists(
-      config: config, parameter: _Parameter.backgroundImageIos);
+    config: config,
+    parameter: _Parameter.backgroundImageIos,
+  );
   final String? backgroundImageWeb = _checkImageExists(
-      config: config, parameter: _Parameter.backgroundImageWeb);
+    config: config,
+    parameter: _Parameter.backgroundImageWeb,
+  );
   final String? darkBackgroundImage = _checkImageExists(
-      config: config, parameter: _Parameter.darkBackgroundImage);
+    config: config,
+    parameter: _Parameter.darkBackgroundImage,
+  );
   final String? darkBackgroundImageAndroid = _checkImageExists(
     config: config,
     parameter: _Parameter.darkBackgroundImageAndroid,
   );
   final String? darkBackgroundImageIos = _checkImageExists(
-      config: config, parameter: _Parameter.darkBackgroundImageIos);
+    config: config,
+    parameter: _Parameter.darkBackgroundImageIos,
+  );
   final String? darkBackgroundImageWeb = _checkImageExists(
-      config: config, parameter: _Parameter.darkBackgroundImageWeb);
+    config: config,
+    parameter: _Parameter.darkBackgroundImageWeb,
+  );
 
   final plistFiles = config[_Parameter.plistFiles] as List<String>?;
   String gravity = (config['fill'] as bool? ?? false) ? 'fill' : 'center';
@@ -138,21 +180,31 @@ void _createSplashByConfig(Map<String, dynamic> config) {
   if (config[_Parameter.android12Section] != null) {
     final android12Config =
         config[_Parameter.android12Section] as Map<String, dynamic>;
-    android12Image =
-        _checkImageExists(config: android12Config, parameter: _Parameter.image);
+    android12Image = _checkImageExists(
+      config: android12Config,
+      parameter: _Parameter.image,
+    );
     android12DarkImage = _checkImageExists(
-        config: android12Config, parameter: _Parameter.darkImage);
-    android12IconBackgroundColor =
-        parseColor(android12Config[_Parameter.iconBackgroundColor]);
-    darkAndroid12IconBackgroundColor =
-        parseColor(android12Config[_Parameter.iconBackgroundColorDark]);
+      config: android12Config,
+      parameter: _Parameter.darkImage,
+    );
+    android12IconBackgroundColor = parseColor(
+      android12Config[_Parameter.iconBackgroundColor],
+    );
+    darkAndroid12IconBackgroundColor = parseColor(
+      android12Config[_Parameter.iconBackgroundColorDark],
+    );
     android12Color = parseColor(android12Config[_Parameter.color]) ?? color;
     android12DarkColor =
         parseColor(android12Config[_Parameter.darkColor]) ?? darkColor;
     android12BrandingImage = _checkImageExists(
-        config: android12Config, parameter: _Parameter.brandingImage);
+      config: android12Config,
+      parameter: _Parameter.brandingImage,
+    );
     android12DarkBrandingImage = _checkImageExists(
-        config: android12Config, parameter: _Parameter.brandingDarkImage);
+      config: android12Config,
+      parameter: _Parameter.brandingDarkImage,
+    );
     android12Behavior = android12Config[_Parameter.behavior] as String?;
   }
 
@@ -245,16 +297,13 @@ Like the package? Please give it a 👍 here: https://pub.dev/packages/flutter_n
 }
 
 /// Remove any splash screen by setting the default white splash
-void removeSplash({
-  required String? path,
-  required String? flavor,
-}) {
+void removeSplash({required String? path, required String? flavor}) {
   print("Restoring Flutter's default native splash screen...");
   final config = getConfig(configFile: path, flavor: flavor);
 
   final removeConfig = <String, dynamic>{
     _Parameter.color: '#ffffff',
-    _Parameter.darkColor: '#000000'
+    _Parameter.darkColor: '#000000',
   };
 
   if (config.containsKey(_Parameter.android)) {
@@ -300,8 +349,9 @@ String? _checkImageExists({
       "bmp", "dib", // BMP
     ];
 
-    if (!supportedFormats
-        .any((format) => p.extension(image).toLowerCase() == ".$format")) {
+    if (!supportedFormats.any(
+      (format) => p.extension(image).toLowerCase() == ".$format",
+    )) {
       print(
         'Unsupported file format: $image  Your image must be in one of the following formats: $supportedFormats',
       );
@@ -383,9 +433,13 @@ Map<String, dynamic> _yamlToMap(YamlMap yamlMap) {
   for (final MapEntry<dynamic, dynamic> entry in yamlMap.entries) {
     if (!_Parameter.all.contains(entry.key)) {
       AnsiPen pen = AnsiPen()..red(bold: true);
-      print(pen("⚠️ The parameter \"${entry.key}\" was found "
+      print(
+        pen(
+          "⚠️ The parameter \"${entry.key}\" was found "
           "in your flutter_native_splash config, but \"${entry.key}\" "
-          "is not a valid flutter_native_splash parameter."));
+          "is not a valid flutter_native_splash parameter.",
+        ),
+      );
       exit(1);
     }
     if (entry.value is YamlList) {
@@ -510,6 +564,7 @@ class _Parameter {
     gravity,
     iconBackgroundColor,
     iconBackgroundColorDark,
+    behavior,
     image,
     imageAndroid,
     imageIos,

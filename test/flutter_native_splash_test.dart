@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_native_splash/cli_commands.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as image;
 import 'package:path/path.dart' as p;
 
 void main() {
@@ -14,8 +15,12 @@ void main() {
   });
 
   group('config file from args', () {
-    final testDir =
-        p.join('.dart_tool', 'flutter_native_splash', 'test', 'config_file');
+    final testDir = p.join(
+      '.dart_tool',
+      'flutter_native_splash',
+      'test',
+      'config_file',
+    );
 
     void setCurrentDirectory(String path) {
       final pathValue = p.join(testDir, path);
@@ -25,12 +30,10 @@ void main() {
 
     test('default', () {
       setCurrentDirectory('default');
-      File('flutter_native_splash.yaml').writeAsStringSync(
-        '''
+      File('flutter_native_splash.yaml').writeAsStringSync('''
 flutter_native_splash:
   color: "#00ff00"
-''',
-      );
+''');
       final Map<String, dynamic> config = getConfig(
         configFile: 'flutter_native_splash.yaml',
         flavor: null,
@@ -41,12 +44,10 @@ flutter_native_splash:
     });
     test('default_use_pubspec', () {
       setCurrentDirectory('pubspec_only');
-      File('pubspec.yaml').writeAsStringSync(
-        '''
+      File('pubspec.yaml').writeAsStringSync('''
 flutter_native_splash:
   color: "#00ff00"
-''',
-      );
+''');
       final Map<String, dynamic> config = getConfig(
         configFile: null,
         flavor: null,
@@ -57,6 +58,164 @@ flutter_native_splash:
 
       // fails if config file is missing
       expect(() => getConfig(configFile: null, flavor: null), throwsException);
+    });
+  });
+
+  group('Android 12 image generation', () {
+    late String originalDirectory;
+    final testDir = p.join(
+      '.dart_tool',
+      'flutter_native_splash',
+      'test',
+      'android_12',
+    );
+
+    setUp(() {
+      originalDirectory = Directory.current.path;
+    });
+
+    tearDown(() {
+      Directory.current = originalDirectory;
+    });
+
+    void setCurrentDirectory(String path) {
+      final pathValue = p.join(originalDirectory, testDir, path);
+      Directory(pathValue).createSync(recursive: true);
+      Directory.current = pathValue;
+      Directory('android').createSync();
+      File('android/app/src/main/AndroidManifest.xml')
+        ..createSync(recursive: true)
+        ..writeAsStringSync('''
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity android:name=".MainActivity" />
+    </application>
+</manifest>
+''');
+      Directory('assets').createSync();
+    }
+
+    void writePng(String path, {int width = 512, int height = 512}) {
+      final png = image.Image(width: width, height: height, numChannels: 4);
+      image.fill(png, color: image.ColorRgba8(255, 0, 0, 255));
+      File(path).writeAsBytesSync(image.encodePng(png));
+    }
+
+    image.Image readGeneratedImage(String path) {
+      final generated = image.decodeImage(File(path).readAsBytesSync());
+      expect(generated, isNotNull);
+      return generated!;
+    }
+
+    test('uses 288dp icon when icon background color is omitted', () {
+      setCurrentDirectory('without_icon_background');
+      writePng('assets/splash.png');
+      File('flutter_native_splash.yaml').writeAsStringSync('''
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#ffffff"
+  android_12:
+    image: assets/splash.png
+    color: "#ffffff"
+''');
+
+      createSplash(path: 'flutter_native_splash.yaml', flavor: null);
+
+      final splash = readGeneratedImage(
+        'android/app/src/main/res/drawable-mdpi-v31/android12splash.png',
+      );
+      expect(splash.width, 288);
+      expect(splash.height, 288);
+    });
+
+    test('uses 240dp icon when icon background color is provided', () {
+      setCurrentDirectory('with_icon_background');
+      writePng('assets/splash.png');
+      File('flutter_native_splash.yaml').writeAsStringSync('''
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#ffffff"
+  android_12:
+    image: assets/splash.png
+    color: "#ffffff"
+    icon_background_color: "#111111"
+''');
+
+      createSplash(path: 'flutter_native_splash.yaml', flavor: null);
+
+      final splash = readGeneratedImage(
+        'android/app/src/main/res/drawable-mdpi-v31/android12splash.png',
+      );
+      expect(splash.width, 240);
+      expect(splash.height, 240);
+      expect(
+        File(
+          'android/app/src/main/res/values-v31/styles.xml',
+        ).readAsStringSync(),
+        contains('android:windowSplashScreenIconBackgroundColor'),
+      );
+    });
+
+    test('uses 200x80dp branding image', () {
+      setCurrentDirectory('branding');
+      writePng('assets/splash.png');
+      writePng('assets/branding.png', width: 1000, height: 300);
+      File('flutter_native_splash.yaml').writeAsStringSync('''
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#ffffff"
+  android_12:
+    image: assets/splash.png
+    branding: assets/branding.png
+    color: "#ffffff"
+''');
+
+      createSplash(path: 'flutter_native_splash.yaml', flavor: null);
+
+      final branding = readGeneratedImage(
+        'android/app/src/main/res/drawable-mdpi-v31/android12branding.png',
+      );
+      expect(branding.width, 200);
+      expect(branding.height, 80);
+    });
+
+    test('creates API 23 launch theme with matching status bar', () {
+      setCurrentDirectory('api_23_status_bar');
+      writePng('assets/splash.png');
+      File('flutter_native_splash.yaml').writeAsStringSync('''
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#ffffff"
+  color_dark: "#000000"
+  image: assets/splash.png
+  android_12:
+    image: assets/splash.png
+    color: "#ffffff"
+    color_dark: "#000000"
+''');
+
+      createSplash(path: 'flutter_native_splash.yaml', flavor: null);
+
+      final lightStyles = File(
+        'android/app/src/main/res/values-v23/styles.xml',
+      ).readAsStringSync();
+      final darkStyles = File(
+        'android/app/src/main/res/values-night-v23/styles.xml',
+      ).readAsStringSync();
+      expect(lightStyles, contains('android:statusBarColor'));
+      expect(lightStyles, contains('#ffffff'));
+      expect(lightStyles, contains('android:windowLightStatusBar'));
+      expect(lightStyles, contains('true'));
+      expect(darkStyles, contains('#000000'));
+      expect(darkStyles, contains('false'));
     });
   });
 }

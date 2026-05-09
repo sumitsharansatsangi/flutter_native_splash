@@ -47,6 +47,14 @@ class _FlavorHelper {
     return '${_androidResFolder}values-night/styles.xml';
   }
 
+  String get androidV23StylesFile {
+    return '${_androidResFolder}values-v23/styles.xml';
+  }
+
+  String get androidV23StylesNightFile {
+    return '${_androidResFolder}values-night-v23/styles.xml';
+  }
+
   String get androidV31StylesFile {
     return '${_androidResFolder}values-v31/styles.xml';
   }
