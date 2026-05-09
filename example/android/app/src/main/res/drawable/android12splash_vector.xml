@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="288"
+    android:viewportHeight="288">
+    <group
+        android:name="splash_ring"
+        android:pivotX="144"
+        android:pivotY="144">
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M144,34a110,110 0,1 0,0.1 0"
+            android:strokeColor="#42A5F5"
+            android:strokeLineCap="round"
+            android:strokeWidth="16" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M144,34a110,110 0,0 1,95.3 55"
+            android:strokeColor="#FFFFFF"
+            android:strokeLineCap="round"
+            android:strokeWidth="18" />
+    </group>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M144,94l39,68h-78z" />
+</vector>

@@ -151,7 +151,11 @@ flutter_native_splash:
   # 160 dp in diameter.
   # App icon without an icon background: This should be 288×288 dp, and fit within a circle
   # 192 dp in diameter.
-    image: assets/android12splash.png
+    # Static PNG example:
+    #image: assets/android12splash.png
+    # AnimatedVectorDrawable example. The referenced vector and animator resources are in
+    # example/android/app/src/main/res/drawable and example/android/app/src/main/res/animator.
+    image: assets/android12splash_animated.xml
 
   # Splash screen background color.
     color: "#42a5f5"
@@ -167,7 +171,7 @@ flutter_native_splash:
   # milliseconds. It is only used when the image is an AnimatedVectorDrawable XML file.
   # This does not control how long the splash screen is shown. The splash screen is still
   # removed when Flutter draws its first frame, or when preserve() is used and remove() is called.
-  #animation_duration: 1000
+    animation_duration: 1000
 
   # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
   # apply when the device is in dark mode. If they are not specified, the app will use the
