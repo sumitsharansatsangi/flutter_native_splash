@@ -85,7 +85,8 @@ flutter_native_splash:
   # Following are specific parameters for Android 12+.
   android_12:
     # The image parameter sets the splash screen icon image.  If this parameter is not specified,
-    # the app's launcher icon will be used instead.
+    # the app's launcher icon will be used instead. This can be a PNG image or an
+    # Android AnimatedVectorDrawable XML file.
     # Please note that the splash screen will be clipped to a circle on the center of the screen.
     # App icon with an icon background: This should be 240×240 dp, and fit within a circle
     # 160 dp in diameter.
@@ -102,6 +103,12 @@ flutter_native_splash:
     # The branding property allows you to specify an image used as branding in the splash screen.
     # Android recommends against using branding images. If you use one, it should be 200×80 dp.
     #branding: assets/dart.png
+
+    # The animation_duration property sets the Android 12+ splash animation duration in
+    # milliseconds. It is only used when the image is an AnimatedVectorDrawable XML file.
+    # This does not control how long the splash screen is shown. The splash screen is still
+    # removed when Flutter draws its first frame, or when preserve() is used and remove() is called.
+    #animation_duration: 1000
 
     # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
     # apply when the device is in dark mode. If they are not specified, the app will use the
@@ -250,6 +257,7 @@ Be aware of the following considerations regarding these elements:
 
    - App icon without an icon background, as shown on the left: This should be 288×288 dp, and fit within a circle 192 dp in diameter.
    - App icon with an icon background, as shown on the right: This should be 240×240 dp, and fit within a circle 160 dp in diameter.
+   - Animated icons can be provided as Android AnimatedVectorDrawable XML files. They play only while the native splash is visible.
 
 2. `icon_background_color` is optional, and is useful if you need more contrast between the icon and the window background.
 
@@ -258,6 +266,8 @@ Be aware of the following considerations regarding these elements:
 4. `color` the window background consists of a single opaque color.
 
 5. `branding` is optional. Android recommends against using a branding image; if you use one, it should be 200×80 dp.
+
+6. `animation_duration` is optional for animated vector drawables. It does not delay or extend the splash screen; `preserve()` and `remove()` still control the lifetime when you keep the splash visible during initialization.
 
 **_PLEASE NOTE:_** The splash screen may not appear when you launch the app from Android Studio on API 31. However, it should appear when you launch by clicking on the launch icon in Android. This seems to be resolved in API 32+.
 
@@ -457,7 +467,7 @@ The solution is to remove the above code. Note that this will also remove the fa
 
 ## Are animations/lottie/GIF images supported?
 
-GIFs are now supported on web. Lotties are not yet supported. PRs are always welcome!
+Android 12+ supports AnimatedVectorDrawable XML files in the `android_12.image` parameter. The animation plays only while the native splash screen is visible. GIFs are supported on web. Lotties are not yet supported. PRs are always welcome!
 
 ## I got the error AAPT: error: style attribute 'android:attr/windowSplashScreenBackground' not found
 

@@ -80,6 +80,9 @@ flutter_native_splash:
 
     void setCurrentDirectory(String path) {
       final pathValue = p.join(originalDirectory, testDir, path);
+      if (Directory(pathValue).existsSync()) {
+        Directory(pathValue).deleteSync(recursive: true);
+      }
       Directory(pathValue).createSync(recursive: true);
       Directory.current = pathValue;
       Directory('android').createSync();
@@ -216,6 +219,51 @@ flutter_native_splash:
       expect(lightStyles, contains('true'));
       expect(darkStyles, contains('#000000'));
       expect(darkStyles, contains('false'));
+    });
+
+    test('uses animated vector drawable and animation duration', () {
+      setCurrentDirectory('animated_vector');
+      File('assets/animated_splash.xml').writeAsStringSync('''
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/animated_splash_vector">
+</animated-vector>
+''');
+      File('flutter_native_splash.yaml').writeAsStringSync('''
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#ffffff"
+  android_12:
+    image: assets/animated_splash.xml
+    color: "#ffffff"
+    animation_duration: 750
+''');
+
+      createSplash(path: 'flutter_native_splash.yaml', flavor: null);
+
+      expect(
+        File(
+          'android/app/src/main/res/drawable-mdpi-v31/android12splash.xml',
+        ).existsSync(),
+        isTrue,
+      );
+      expect(
+        File(
+          'android/app/src/main/res/drawable-mdpi-v31/android12splash.png',
+        ).existsSync(),
+        isFalse,
+      );
+      expect(
+        File(
+          'android/app/src/main/res/values-v31/styles.xml',
+        ).readAsStringSync(),
+        allOf(
+          contains('android:windowSplashScreenAnimationDuration'),
+          contains('750'),
+          contains('@drawable/android12splash'),
+        ),
+      );
     });
   });
 }

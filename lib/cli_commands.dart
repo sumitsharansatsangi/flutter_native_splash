@@ -176,6 +176,7 @@ void _createSplashByConfig(Map<String, dynamic> config) {
   String? android12BrandingImage;
   String? android12DarkBrandingImage;
   String? android12Behavior;
+  String? android12AnimationDuration;
 
   if (config[_Parameter.android12Section] != null) {
     final android12Config =
@@ -183,10 +184,12 @@ void _createSplashByConfig(Map<String, dynamic> config) {
     android12Image = _checkImageExists(
       config: android12Config,
       parameter: _Parameter.image,
+      allowXml: true,
     );
     android12DarkImage = _checkImageExists(
       config: android12Config,
       parameter: _Parameter.darkImage,
+      allowXml: true,
     );
     android12IconBackgroundColor = parseColor(
       android12Config[_Parameter.iconBackgroundColor],
@@ -206,6 +209,8 @@ void _createSplashByConfig(Map<String, dynamic> config) {
       parameter: _Parameter.brandingDarkImage,
     );
     android12Behavior = android12Config[_Parameter.behavior] as String?;
+    android12AnimationDuration = android12Config[_Parameter.animationDuration]
+        ?.toString();
   }
 
   if (!config.containsKey(_Parameter.android) ||
@@ -237,6 +242,7 @@ void _createSplashByConfig(Map<String, dynamic> config) {
         android12DarkBrandingImagePath:
             android12DarkBrandingImage ?? android12BrandingImage,
         android12Behavior: android12Behavior,
+        android12AnimationDuration: android12AnimationDuration,
       );
     } else {
       print('Android folder not found, skipping Android splash update...');
@@ -329,6 +335,7 @@ void removeSplash({required String? path, required String? flavor}) {
 String? _checkImageExists({
   required Map<String, dynamic> config,
   required String parameter,
+  bool allowXml = false,
 }) {
   final String? image = config[parameter]?.toString();
   if (image != null) {
@@ -348,6 +355,7 @@ String? _checkImageExists({
       "ico", // ICO
       "bmp", "dib", // BMP
     ];
+    if (allowXml) supportedFormats.add("xml");
 
     if (!supportedFormats.any(
       (format) => p.extension(image).toLowerCase() == ".$format",
@@ -514,6 +522,7 @@ class _Parameter {
   static const iconBackgroundColor = 'icon_background_color';
   static const iconBackgroundColorDark = 'icon_background_color_dark';
   static const behavior = 'behavior';
+  static const animationDuration = 'animation_duration';
   static const image = 'image';
   static const imageAndroid = 'image_android';
   static const imageIos = 'image_ios';
@@ -565,6 +574,7 @@ class _Parameter {
     iconBackgroundColor,
     iconBackgroundColorDark,
     behavior,
+    animationDuration,
     image,
     imageAndroid,
     imageIos,

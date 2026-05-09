@@ -144,7 +144,8 @@ flutter_native_splash:
   # Following are Android 12 specific parameter.
   android_12:
   # The image parameter sets the splash screen icon image.  If this parameter is not specified,
-  # the app's launcher icon will be used instead.
+  # the app's launcher icon will be used instead. This can be a PNG image or an
+  # Android AnimatedVectorDrawable XML file.
   # Please note that the splash screen will be clipped to a circle on the center of the screen.
   # App icon with an icon background: This should be 240×240 dp, and fit within a circle
   # 160 dp in diameter.
@@ -161,6 +162,12 @@ flutter_native_splash:
   # The branding property allows you to specify an image used as branding in the splash screen.
   # Android recommends against using branding images. If you use one, it should be 200×80 dp.
   #branding: assets/dart.png
+
+  # The animation_duration property sets the Android 12+ splash animation duration in
+  # milliseconds. It is only used when the image is an AnimatedVectorDrawable XML file.
+  # This does not control how long the splash screen is shown. The splash screen is still
+  # removed when Flutter draws its first frame, or when preserve() is used and remove() is called.
+  #animation_duration: 1000
 
   # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
   # apply when the device is in dark mode. If they are not specified, the app will use the

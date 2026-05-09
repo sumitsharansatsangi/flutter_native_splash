@@ -89,6 +89,7 @@ void _createAndroidSplash({
   String? android12BrandingImagePath,
   String? android12DarkBrandingImagePath,
   String? android12Behavior,
+  String? android12AnimationDuration,
 }) {
   _applyImageAndroid(imagePath: imagePath);
 
@@ -226,6 +227,7 @@ void _createAndroidSplash({
     android12IconBackgroundColor: android12IconBackgroundColor,
     android12BrandingImagePath: android12BrandingImagePath,
     android12Behavior: android12Behavior,
+    android12AnimationDuration: android12AnimationDuration,
   );
 
   _applyStylesXml(
@@ -237,6 +239,7 @@ void _createAndroidSplash({
     android12IconBackgroundColor: darkAndroid12IconBackgroundColor,
     android12BrandingImagePath: android12DarkBrandingImagePath,
     android12Behavior: android12Behavior,
+    android12AnimationDuration: android12AnimationDuration,
   );
 
   _applyStylesXml(
@@ -268,12 +271,34 @@ void _applyImageAndroid({
   if (imagePath == null) {
     for (final template in templates) {
       _deleteImageAndroid(template: template, fileName: fileName);
+      _deleteImageAndroid(
+        template: template,
+        fileName: '${p.basenameWithoutExtension(fileName)}.xml',
+      );
     }
   } else {
     print(
       '[Android] Creating ${dark ? 'dark mode ' : 'default '}'
       '${fileName.split('.')[0]} images',
     );
+
+    final sourceExtension = p.extension(imagePath).toLowerCase();
+    if (sourceExtension == '.xml') {
+      if (!android12) {
+        print('XML splash images are only supported for Android 12 and later.');
+        exit(1);
+      }
+      _copyDrawableXmlAndroid(
+        templates: templates,
+        imagePath: imagePath,
+        fileName: '${p.basenameWithoutExtension(fileName)}.xml',
+        androidResFolder: _flavorHelper.androidResFolder,
+      );
+      for (final template in templates) {
+        _deleteImageAndroid(template: template, fileName: fileName);
+      }
+      return;
+    }
 
     final image = decodeImage(File(imagePath).readAsBytesSync());
     if (image == null) {
@@ -288,6 +313,12 @@ void _applyImageAndroid({
       androidResFolder: _flavorHelper.androidResFolder,
       targetSize: targetSize,
     );
+    for (final template in templates) {
+      _deleteImageAndroid(
+        template: template,
+        fileName: '${p.basenameWithoutExtension(fileName)}.xml',
+      );
+    }
   }
 }
 
@@ -295,6 +326,19 @@ _AndroidImageSize _getAndroid12SplashIconSize(String? iconBackgroundColor) {
   return iconBackgroundColor == null
       ? _android12SplashIconWithoutBackgroundSize
       : _android12SplashIconWithBackgroundSize;
+}
+
+void _copyDrawableXmlAndroid({
+  required List<_AndroidDrawableTemplate> templates,
+  required String imagePath,
+  required String fileName,
+  required String androidResFolder,
+}) {
+  for (final template in templates) {
+    final file = File('$androidResFolder${template.directoryName}/$fileName');
+    file.createSync(recursive: true);
+    File(imagePath).copySync(file.path);
+  }
 }
 
 List<_AndroidDrawableTemplate> _getAssociatedTemplates({
@@ -458,6 +502,7 @@ void _applyStylesXml({
   String? android12IconBackgroundColor,
   String? android12BrandingImagePath,
   String? android12Behavior,
+  String? android12AnimationDuration,
 }) {
   final stylesFile = File(file);
   print('[Android]  - $file');
@@ -478,6 +523,7 @@ void _applyStylesXml({
     android12IconBackgroundColor: android12IconBackgroundColor,
     android12BrandingImagePath: android12BrandingImagePath,
     android12Behavior: android12Behavior,
+    android12AnimationDuration: android12AnimationDuration,
   );
 }
 
@@ -492,6 +538,7 @@ Future<void> _updateStylesFile({
   required String? android12IconBackgroundColor,
   required String? android12BrandingImagePath,
   required String? android12Behavior,
+  required String? android12AnimationDuration,
 }) async {
   final stylesDocument = XmlDocument.parse(stylesFile.readAsStringSync());
   final resources = stylesDocument.getElement('resources');
@@ -632,6 +679,19 @@ Future<void> _updateStylesFile({
       launchTheme: launchTheme,
       name: 'android:windowSplashScreenBehavior',
       value: android12Behavior,
+    );
+  }
+
+  if (android12AnimationDuration == null) {
+    _removeElement(
+      launchTheme: launchTheme,
+      name: 'android:windowSplashScreenAnimationDuration',
+    );
+  } else {
+    _replaceElement(
+      launchTheme: launchTheme,
+      name: 'android:windowSplashScreenAnimationDuration',
+      value: android12AnimationDuration,
     );
   }
 
