@@ -133,6 +133,7 @@ void _createSplashByConfig(Map<String, dynamic> config) {
   String? android12DarkColor;
   String? android12BrandingImage;
   String? android12DarkBrandingImage;
+  String? android12Behavior;
 
   if (config[_Parameter.android12Section] != null) {
     final android12Config =
@@ -152,6 +153,7 @@ void _createSplashByConfig(Map<String, dynamic> config) {
         config: android12Config, parameter: _Parameter.brandingImage);
     android12DarkBrandingImage = _checkImageExists(
         config: android12Config, parameter: _Parameter.brandingDarkImage);
+    android12Behavior = android12Config[_Parameter.behavior] as String?;
   }
 
   if (!config.containsKey(_Parameter.android) ||
@@ -182,6 +184,7 @@ void _createSplashByConfig(Map<String, dynamic> config) {
         android12BrandingImagePath: android12BrandingImage,
         android12DarkBrandingImagePath:
             android12DarkBrandingImage ?? android12BrandingImage,
+        android12Behavior: android12Behavior,
       );
     } else {
       print('Android folder not found, skipping Android splash update...');
@@ -456,6 +459,7 @@ class _Parameter {
   static const gravity = 'android_gravity';
   static const iconBackgroundColor = 'icon_background_color';
   static const iconBackgroundColorDark = 'icon_background_color_dark';
+  static const behavior = 'behavior';
   static const image = 'image';
   static const imageAndroid = 'image_android';
   static const imageIos = 'image_ios';

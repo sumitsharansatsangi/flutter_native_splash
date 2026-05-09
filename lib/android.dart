@@ -70,6 +70,7 @@ void _createAndroidSplash({
   required String? screenOrientation,
   String? android12BrandingImagePath,
   String? android12DarkBrandingImagePath,
+  String? android12Behavior,
 }) {
   _applyImageAndroid(imagePath: imagePath);
 
@@ -184,6 +185,7 @@ void _createAndroidSplash({
     android12ImagePath: android12ImagePath,
     android12IconBackgroundColor: android12IconBackgroundColor,
     android12BrandingImagePath: android12BrandingImagePath,
+    android12Behavior: android12Behavior,
   );
 
   _applyStylesXml(
@@ -194,18 +196,21 @@ void _createAndroidSplash({
     android12ImagePath: android12DarkImagePath,
     android12IconBackgroundColor: darkAndroid12IconBackgroundColor,
     android12BrandingImagePath: android12DarkBrandingImagePath,
+    android12Behavior: android12Behavior,
   );
 
   _applyStylesXml(
     fullScreen: fullscreen,
     file: _flavorHelper.androidStylesFile,
     template: _androidStylesXml,
+    android12Behavior: null,
   );
 
   _applyStylesXml(
     fullScreen: fullscreen,
     file: _flavorHelper.androidNightStylesFile,
     template: _androidStylesNightXml,
+    android12Behavior: null,
   );
 
   _applyOrientation(orientation: screenOrientation);
@@ -235,11 +240,13 @@ void _applyImageAndroid({
       exit(1);
     }
 
+    int? targetDp = fileName.contains('branding') ? 160 : android12 ? 432 : null;
     _saveImageAndroid(
       templates: templates,
       image: image,
       fileName: fileName,
       androidResFolder: _flavorHelper.androidResFolder,
+      targetDp: targetDp,
     );
   }
 }
@@ -263,15 +270,24 @@ void _saveImageAndroid({
   required Image image,
   required fileName,
   required String androidResFolder,
+  int? targetDp,
 }) async {
   await Future.wait(
     templates.map(
       (template) => Isolate.run(() async {
         //added file name attribute to make this method generic for splash image and branding image.
+        int width, height;
+        if (targetDp != null) {
+          width = (targetDp * template.pixelDensity).toInt();
+          height = (targetDp * template.pixelDensity * image.height / image.width).toInt();
+        } else {
+          width = image.width * template.pixelDensity ~/ 4;
+          height = image.height * template.pixelDensity ~/ 4;
+        }
         final newFile = copyResize(
           image,
-          width: image.width * template.pixelDensity ~/ 4,
-          height: image.height * template.pixelDensity ~/ 4,
+          width: width,
+          height: height,
           interpolation: Interpolation.average,
         );
 
@@ -366,6 +382,7 @@ void _applyStylesXml({
   String? android12ImagePath,
   String? android12IconBackgroundColor,
   String? android12BrandingImagePath,
+  String? android12Behavior,
 }) {
   final stylesFile = File(file);
   print('[Android]  - $file');
@@ -383,6 +400,7 @@ void _applyStylesXml({
     android12ImagePath: android12ImagePath,
     android12IconBackgroundColor: android12IconBackgroundColor,
     android12BrandingImagePath: android12BrandingImagePath,
+    android12Behavior: android12Behavior,
   );
 }
 
@@ -394,6 +412,7 @@ Future<void> _updateStylesFile({
   required String? android12ImagePath,
   required String? android12IconBackgroundColor,
   required String? android12BrandingImagePath,
+  required String? android12Behavior,
 }) async {
   final stylesDocument = XmlDocument.parse(stylesFile.readAsStringSync());
   final resources = stylesDocument.getElement('resources');
@@ -497,6 +516,19 @@ Future<void> _updateStylesFile({
       launchTheme: launchTheme,
       name: 'android:windowSplashScreenIconBackgroundColor',
       value: '#$android12IconBackgroundColor',
+    );
+  }
+
+  if (android12Behavior == null) {
+    _removeElement(
+      launchTheme: launchTheme,
+      name: 'android:windowSplashScreenBehavior',
+    );
+  } else {
+    _replaceElement(
+      launchTheme: launchTheme,
+      name: 'android:windowSplashScreenBehavior',
+      value: android12Behavior,
     );
   }
 
