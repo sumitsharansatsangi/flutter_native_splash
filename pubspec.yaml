@@ -1,7 +1,7 @@
 name: flutter_native_splash
 description: Customize Flutter's default white native splash screen with
   background color and splash image. Supports dark mode, full screen, and more.
-version: 2.4.6
+version: 2.4.7
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 repository: https://github.com/jonbhanson/flutter_native_splash
 issue_tracker: https://github.com/jonbhanson/flutter_native_splash/issues
@@ -31,4 +31,30 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
-  
+screenshots:
+  - description: 'Examples of the splash screen on iOS.'
+    path: splash_demo.webp
+  - description: 'Examples of the splash screen on iOS in dark mode.'
+    path: splash_demo_dark.webp
+
+flutter:
+  # This section identifies this Flutter project as a plugin project.
+  # The 'pluginClass' specifies the class (in Java, Kotlin, Swift, Objective-C, etc.)
+  # which should be registered in the plugin registry. This is required for
+  # using method channels.
+  # The Android 'package' specifies package in which the registered class is.
+  # This is required for using method channels on Android.
+  # The 'ffiPlugin' specifies that native code should be built and bundled.
+  # This is required for using `dart:ffi`.
+  # All these are used by the tooling to maintain consistency when
+  # adding or updating assets for this project.
+  plugin:
+    platforms:
+      web:
+        pluginClass: FlutterNativeSplashWeb
+        fileName: flutter_native_splash_web.dart
+
+platforms:
+  android:
+  ios:
+  web:

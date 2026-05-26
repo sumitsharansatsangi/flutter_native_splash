@@ -5,21 +5,13 @@ When your app is opened, there is a brief time while the native app loads Flutte
     <img src="https://raw.githubusercontent.com/jonbhanson/flutter_native_splash/master/splash_demo_dark.gif" />
 </p>
 
-# What's New
-
-Support for GIF images in web.
-
-You can now keep the splash screen up while your app initializes! No need for a secondary splash screen anymore. Just use the `preserve` and `remove` methods together to remove the splash screen after your initialization is complete. See [details below](https://pub.dev/packages/flutter_native_splash#3-set-up-app-initialization-optional).
-
 # Usage
-
-Would you prefer a video tutorial instead? Check out <a href="https://www.youtube.com/watch?v=dB0dOnc2k10">Johannes Milke's tutorial</a>.
 
 First, add `flutter_native_splash` as a dependency in your pubspec.yaml file.
 
 ```yaml
 dependencies:
-  flutter_native_splash: ^2.4.5
+  flutter_native_splash: ^2.4.7
 ```
 
 Don't forget to `flutter pub get`.
@@ -32,10 +24,21 @@ Customize the following settings and add to your project's `pubspec.yaml` file o
 flutter_native_splash:
   # This package generates native code to customize Flutter's default white native splash screen
   # with background color and splash image.
-  # Customize the parameters below, and run the following command in the terminal:
+  # Steps to make this work:
+  # 1. Customize the parameters below.
+  # 2. run the following command in the terminal:
   # dart run flutter_native_splash:create
-  # To restore Flutter's default white splash screen, run the following command in the terminal:
+  # or if you place this not in pubspec.yaml and not in flutter_native_splash.yaml:
+  # dart run flutter_native_splash:create -p ../your-filepath.yaml
+  # 3. voila, done!
+
+  # NOTES:
+  # - in case you got some trouble, cleaning up flutter project might help:
+  # flutter clean ; flutter pub get
+  # - To restore Flutter's default white splash screen, run the following command in the terminal:
   # dart run flutter_native_splash:remove
+  # or if you place this not in pubspec.yaml and not in flutter_native_splash.yaml:
+  # dart run flutter_native_splash:remove -p ../your-filepath.yaml
 
   # IMPORTANT NOTE: These parameter do not affect the configuration of Android 12 and later, which
   # handle splash screens differently that prior versions of Android.  Android 12 and later must be
@@ -65,15 +68,15 @@ flutter_native_splash:
   # To position the branding image at the bottom of the screen you can use bottom, bottomRight,
   # and bottomLeft. The default values is bottom if not specified or specified something else.
   #branding_mode: bottom
-  
-  # Set the branding padding from the bottom of the screen.  The default value is 0
-  # (Not supported on web yet)
-  # branding_bottom_padding: 24
+
+  # Set the branding padding from the bottom of the screen. The default value is 0.
+  # Not supported on web yet.
+  #branding_bottom_padding: 24
 
   # The color_dark, background_image_dark, image_dark, branding_dark are parameters that set the background
   # and image when the device is in dark mode. If they are not specified, the app will use the
-  # parameters from above.  If there is no parameter above, the app will use the light mode values.
-  # If the image_dark parameter is specified, color_dark or background_image_dark must be specified.  
+  # parameters from above. If there is no parameter above, the app will use the light mode values.
+  # If the image_dark parameter is specified, color_dark or background_image_dark must be specified.
   # color_dark and background_image_dark cannot both be set.
   #color_dark: "#042a49"
   #background_image_dark: "assets/dark-background.png"
@@ -153,12 +156,13 @@ flutter_native_splash:
   #branding_dark_web: assets/dart_dark-web.gif
 
   # The position of the splash image can be set with android_gravity, ios_content_mode, and
-  # web_image_mode parameters.  All default to center.
+  # web_image_mode parameters. All default to center.
   #
   # android_gravity can be one of the following Android Gravity (see
   # https://developer.android.com/reference/android/view/Gravity): bottom, center,
   # center_horizontal, center_vertical, clip_horizontal, clip_vertical, end, fill, fill_horizontal,
-  # fill_vertical, left, right, start, or top. android_gravity can be combined using the | operator to achieve multiple effects. 
+  # fill_vertical, left, right, start, or top. android_gravity can be combined using the | operator
+  # to achieve multiple effects.
   # For example:
   # `android_gravity: fill|clip_vertical` - This will fill the width while maintaining the image's vertical aspect ratio
   #android_gravity: center
@@ -177,8 +181,12 @@ flutter_native_splash:
   # https://developer.android.com/guide/topics/manifest/activity-element#screen
   #android_screen_orientation: sensorLandscape
 
-  # To hide the notification bar, use the fullscreen parameter.  Has no effect in web since web
-  # has no notification bar.  Defaults to false.
+  # By specifying the Android minimum SDK version, flutter_native_splash can generate only the
+  # styles and drawables needed for your configured Android API range.
+  #android_min_sdk: 24  # default 16
+
+  # To hide the notification bar, use the fullscreen parameter. Has no effect in web since web
+  # has no notification bar. Defaults to false.
   # NOTE: Unlike Android, iOS will not automatically show the notification bar when the app loads.
   #       To show the notification bar, add the following code to your Flutter app:
   #       WidgetsFlutterBinding.ensureInitialized();
@@ -245,9 +253,9 @@ If you find this package useful, you can support it for free by giving it a thum
 
 <p align='center'><a href="https://www.buymeacoffee.com/jonhanson"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=jonhanson&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"></a></p>
 
-# Android 12+ Support
+# Android 12 and Later
 
-Android 12 has a [new method](https://developer.android.com/about/versions/12/features/splash-screen) of adding splash screens, which consists of a window background, icon, and the icon background. Note that a background image is not supported.
+Android 12 and later has a [different method](https://developer.android.com/about/versions/12/features/splash-screen) of adding splash screens, which consists of a window background, icon, and the icon background. Note that a background image is not supported.
 
 <img src="https://developer.android.com/static/images/guide/topics/ui/splash-screen/splash-screen-composition.png"/>
 
@@ -265,7 +273,7 @@ Be aware of the following considerations regarding these elements:
 
 4. `color` the window background consists of a single opaque color.
 
-5. `branding` is optional. Android recommends against using a branding image; if you use one, it should be 200×80 dp.
+5. `branding` is optional. Android recommends against using a branding image; if you use one, it should be 200×80 dp (800×320 px at 4x density).
 
 6. `animation_duration` is optional for animated vector drawables. It does not delay or extend the splash screen; `preserve()` and `remove()` still control the lifetime when you keep the splash visible during initialization.
 

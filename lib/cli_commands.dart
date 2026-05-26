@@ -161,6 +161,7 @@ void _createSplashByConfig(Map<String, dynamic> config) {
   }
   final String? androidScreenOrientation =
       config[_Parameter.androidScreenOrientation] as String?;
+  final int? androidMinSdk = config[_Parameter.androidMinSdk] as int?;
   final brandingGravity =
       config[_Parameter.brandingGravity] as String? ?? 'bottom';
   final bool fullscreen = config[_Parameter.fullscreen] as bool? ?? false;
@@ -231,6 +232,7 @@ void _createSplashByConfig(Map<String, dynamic> config) {
         brandingGravity: brandingGravity,
         fullscreen: fullscreen,
         screenOrientation: androidScreenOrientation,
+        androidMinSdk: androidMinSdk,
         android12ImagePath: android12Image,
         android12DarkImagePath: android12DarkImage ?? android12Image,
         android12BackgroundColor: android12Color,
@@ -484,6 +486,7 @@ String? parseColor(dynamic color) {
 class _Parameter {
   static const android = 'android';
   static const android12Section = 'android_12';
+  static const androidMinSdk = 'android_min_sdk';
   static const androidScreenOrientation = 'android_screen_orientation';
   static const backgroundImage = 'background_image';
   static const backgroundImageAndroid = 'background_image_android';
@@ -536,6 +539,7 @@ class _Parameter {
   static List<String> all = [
     android,
     android12Section,
+    androidMinSdk,
     androidScreenOrientation,
     backgroundImage,
     backgroundImageAndroid,

@@ -1,6 +1,12 @@
-## [2.4.6] - ()
+## [2.4.7] - (2025-Oct-16)
+- Updated documentation.  Thanks [Ideeyn](https://github.com/ideeyn) for [PR #806](https://github.com/jonbhanson/flutter_native_splash/pull/806).
+- Specify branding dimensions.  Thanks [Ivan](https://github.com/divan) for the [tip](https://github.com/jonbhanson/flutter_native_splash/issues/729#issuecomment-3172822059).
+- Update dependencies.
 
-- Ensure compatibility with Java 21.
+## [2.4.6] - (2025-Apr-06)
+
+- Ensure compatibility with Java 21. Thanks [Fichtelcoder](https://github.com/FrankenApps) for [PR #759](https://github.com/jonbhanson/flutter_native_splash/pull/759).
+- Sets Android namespace.  Fixes [#755](https://github.com/jonbhanson/flutter_native_splash/issues/755).
 
 ## [2.4.5] - (2025-Feb-16)
 - Updated readme.  Closes [#765](https://github.com/jonbhanson/flutter_native_splash/issues/765).  Thanks [Jason](https://github.com/kingdomseed) for [PR #767](https://github.com/jonbhanson/flutter_native_splash/pull/767).
