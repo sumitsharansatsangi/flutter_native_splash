@@ -142,12 +142,45 @@ flutter_native_splash:
   #image_dark_web: assets/splash-invert-web.gif
   #background_image_android: "assets/background-android.png"
   #background_image_dark_android: "assets/dark-background-android.png"
-  #background_image_ios: "assets/background-ios.png"
-  #background_image_dark_ios: "assets/dark-background-ios.png"
-  #background_image_web: "assets/background-web.png"
-  #background_image_dark_web: "assets/dark-background-web.png"
-  #branding_android: assets/brand-android.png
+  #background_image_ios:          "assets/background-ios.png"
+  #background_image_dark_ios:     "assets/dark-background-ios.png"
+  #background_image_web:          "assets/background-web.png"
+  #background_image_dark_web:     "assets/dark-background-web.png"
+  #branding_android:              "assets/brand-android.png"
   #branding_bottom_padding_android: 24
+
+  # general image for all platform (except android 12+):
+  # allows you to specify an image used in the splash screen. It must be a
+  # png file and should be sized for 4x pixel density.
+  image:                assets/splash.png
+  #image_dark:          assets/splash-invert.png
+  # platform-specific image. will override general image if active:
+  #image_android:       assets/splash-android.png
+  #image_dark_android:  assets/splash-invert-android.png
+  #image_ios:           assets/splash-ios.png
+  #image_dark_ios:      assets/splash-invert-ios.png
+  #image_web:           assets/splash-web.gif
+  #image_dark_web:      assets/splash-invert-web.gif  
+
+  # image alignment (default center if not specified, or speccified something else):
+  #android_gravity: center       # bottom, center, center_horizontal, center_vertical, 
+  # clip_horizontal, clip_vertical, end, fill, fill_horizontal, fill_vertical, left, right, start, top. could also be a combination like `android_gravity: fill|clip_vertical`
+  # This will fill the width while maintaining the image's vertical aspect ratio.
+  # visit https://developer.android.com/reference/android/view/Gravity
+  #ios_content_mode: center      # scaleToFill, scaleAspectFit, scaleAspectFill, 
+  # center, top, bottom, left, right, topLeft, topRight, bottomLeft, or bottomRight.
+  # visit https://developer.apple.com/documentation/uikit/uiview/contentmode
+  # You can combine scaleAspectFit or scaleAspectFill with an anchor, for example:
+  #ios_content_mode: scaleAspectFit|top
+  #ios_content_mode: scaleAspectFill|bottomRight
+  #web_image_mode: center        # center, contain, stretch, cover
+
+  # general branding for all platform (except android 12+):
+  # allows you to specify an image used as branding in the splash screen. should be png.
+  #branding:      assets/dart.png
+  #branding_dark: assets/dart_dark.png
+  # platform-specific branding. will override general branding if active:
+  #branding_android:      assets/brand-android.png
   #branding_dark_android: assets/dart_dark-android.png
   #branding_ios: assets/brand-ios.png
   #branding_bottom_padding_ios: 24
